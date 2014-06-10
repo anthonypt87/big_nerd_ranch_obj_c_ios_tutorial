@@ -31,6 +31,15 @@ NSString *docPath()
         tasks= [[NSMutableArray alloc] init];
     }
     
+    // If tasks is empty...
+    if ([tasks count] == 0) {
+        // Put some strings in it
+        [tasks addObject:@"Walk the dog"];
+        [tasks addObject:@"Feed the hogs"];
+        [tasks addObject:@"Chop the logs"];
+        
+    }
+    
     // Create and configure the UIWindow instance
     // A CGRect is a struct with an origin (x,y) and size (width,height)
     CGRect windowFrame = [[UIScreen mainScreen] bounds];
@@ -103,6 +112,42 @@ NSString *docPath()
 - (void)applicationWillTerminate:(UIApplication *)application
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+}
+
+#pragma mark - Table view management
+
+- (NSInteger)tableView:(UITableView *)tableView
+numberOfRowsInSection:(NSInteger)section
+{
+    // Because this table view only has one section
+    // the number of rows in it is equal to the number
+    // of items in our task array
+    return [tasks count];
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView
+         cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    // To improve performance, we reconfigure cells in memory
+    // that have scrolled off the screen and hand them back
+    // with new contents instead of always creating new cells.
+    // First, we check if there's a cell available for reuse.
+    UITableViewCell *c = [taskTable dequeueReusableCellWithIdentifier:@"Cell"];
+    
+    if (!c) {
+        // ...and only allocate a new cell if none are available
+        c = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault
+                                   reuseIdentifier:@"Cell"];
+    }
+    
+    // Then we (re)configure the cell based on the model object
+    // in this case our todoItems array.
+    NSString *item = [tasks objectAtIndex:[indexPath row]];
+    [[c textLabel] setText:item];
+    
+    
+    // and hand back to the table view the properly configured cell
+    return c;
 }
 
 @end
